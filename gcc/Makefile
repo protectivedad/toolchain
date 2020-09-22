@@ -49,6 +49,10 @@ CONFIGURE_ARGS := \
 	--enable-languages=c,c++ \
 	--enable-version-specific-runtime-libs
 
+MAKE_OPTS := \
+	gcc_cv_libc_provides_ssp=no
+
+
 GIT_ID_FILE = $(CURR_DIR)/$(APP)-GIT_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
 SOURCE_ID_FILE = $(CURR_DIR)/$(APP)-SOURCE_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
 PATCH_ID_FILE = $(CURR_DIR)/$(APP)-PATCH_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
@@ -91,7 +95,7 @@ $(CONFIG_ID_FILE) : $(PATCH_ID_FILE)
 	@echo "$(APP) is configured"
 
 gcc : $(CONFIG_ID_FILE)
-	$(MAKE) -C build-$(APP) all-gcc
+	$(MAKE) -C build-$(APP) $(MAKE_OPTS) all-gcc
 	$(MAKE) -C build-$(APP) install-strip-gcc
 
 libgcc : $(CONFIG_ID_FILE)
@@ -100,7 +104,7 @@ libgcc : $(CONFIG_ID_FILE)
 		ln -srf $(LIBC_SO).fake $(LIBC_SO); \
 	fi
 	[ ! -e $(TOOLCHAIN_SYSROOT)/lib/crti.o ] && ln -sr $(TOOLCHAIN_SYSROOT)/usr/lib/crt*.o $(TOOLCHAIN_SYSROOT)/lib/ || true
-	$(MAKE) -C build-$(APP) all-target-libgcc
+	$(MAKE) -C build-$(APP) $(MAKE_OPTS) all-target-libgcc
 	$(MAKE) -C build-$(APP) install-strip-target-libgcc
 	[ -e $(LIBC_SO).fake ] && rm $(LIBC_SO) $(LIBC_SO).fake || true
 	[ -L $(TOOLCHAIN_SYSROOT)/lib/crti.o ] && rm `find $(TOOLCHAIN_SYSROOT)/lib -type l -name crt*.o`
@@ -108,7 +112,7 @@ libgcc : $(CONFIG_ID_FILE)
 
 install : $(CONFIG_ID_FILE)
 	[ ! -e $(TOOLCHAIN_SYSROOT)/lib/crti.o ] && ln -sr $(TOOLCHAIN_SYSROOT)/usr/lib/crt*.o $(TOOLCHAIN_SYSROOT)/lib/ || true
-	$(MAKE) -C build-$(APP)
+	$(MAKE) -C build-$(APP) $(MAKE_OPTS)
 	$(MAKE) -C build-$(APP) install-strip
 	[ -L $(TOOLCHAIN_SYSROOT)/lib/crti.o ] && rm `find $(TOOLCHAIN_SYSROOT)/lib -type l -name crt*.o`
 	for lib in libstdc++.so.6 libitm.so.1 libatomic.so.1; do \
@@ -121,7 +125,7 @@ clean:
 	rm -rf $(COMPILE_ID_FILE) $(CONFIG_ID_FILE)
 
 distclean:
-	for src in $(GCCADDS) ; do rm -rf $${src%%-*} $$src.tar.*; done
+	for src in $(GCCADDS) ; do rm -rf $${src%%-*} ; done
 	rm -rf build-$(APP) $(APP) $(APP)-*_ID_*
 
 # Shell target permits creating an interacive shell for debugging

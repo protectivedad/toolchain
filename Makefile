@@ -1,5 +1,9 @@
 all: install
 
+
+BUILD_DIR := $(shell pwd)
+include $(BUILD_DIR)/make.common
+
 SUBDIRS = kernel binutils elfkickers gcc uclibc
 
 STAGES := $(SUBDIRS) startfiles libgcc final
@@ -33,6 +37,7 @@ install: uclibc
 	$(MAKE) -C gcc
 
 clean: 
+	rm -rf $(TOOLCHAIN)
 	for dir in $(SUBDIRS); do \
 		if [ -d $$dir ] ; then \
 			if [ -f $$dir/Makefile ] ; then \
@@ -42,6 +47,7 @@ clean:
 	done
 
 distclean: 
+	rm -rf $(TOOLCHAIN)
 	for dir in $(SUBDIRS); do \
 		if [ -d $$dir ] ; then \
 			if [ -f $$dir/Makefile ] ; then \

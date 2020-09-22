@@ -1,0 +1,8 @@
+/gcc/
+/build-gcc/
+/gmp/
+/isl/
+/mpc/
+/mpfr/
+/gcc-*_ID_*
+

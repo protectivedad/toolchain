@@ -108,17 +108,12 @@ libgcc : $(CONFIG_ID_FILE)
 	$(MAKE) -C build-$(APP) install-strip-target-libgcc
 	[ -e $(LIBC_SO).fake ] && rm $(LIBC_SO) $(LIBC_SO).fake || true
 	[ -L $(TOOLCHAIN_SYSROOT)/lib/crti.o ] && rm `find $(TOOLCHAIN_SYSROOT)/lib -type l -name crt*.o`
-	ln -sfr $(TOOLCHAIN_SYSROOT)/../lib/gcc/$(TOOLCHAIN_PREFIX)/`$(TOOLCHAIN)/bin/$(TOOLCHAIN_PREFIX)-gcc -dumpversion`/libgcc_s.so.1 $(TOOLCHAIN_SYSROOT)/lib
 
 install : $(CONFIG_ID_FILE)
 	[ ! -e $(TOOLCHAIN_SYSROOT)/lib/crti.o ] && ln -sr $(TOOLCHAIN_SYSROOT)/usr/lib/crt*.o $(TOOLCHAIN_SYSROOT)/lib/ || true
 	$(MAKE) -C build-$(APP) $(MAKE_OPTS)
 	$(MAKE) -C build-$(APP) install-strip
 	[ -L $(TOOLCHAIN_SYSROOT)/lib/crti.o ] && rm `find $(TOOLCHAIN_SYSROOT)/lib -type l -name crt*.o`
-	for lib in libstdc++.so.6 libitm.so.1 libatomic.so.1; do \
-		ln -sfr $(TOOLCHAIN_SYSROOT)/../lib/gcc/$(TOOLCHAIN_PREFIX)/`$(TOOLCHAIN)/bin/$(TOOLCHAIN_PREFIX)-gcc -dumpversion`/$$lib $(TOOLCHAIN_SYSROOT)/lib; \
-	done
-
 
 clean:
 	$(MAKE) -C build-$(APP) distclean

@@ -16,17 +16,17 @@ VERS=$(COMPILER_VERS)
 BRANCH = $(APP)-$(VERS)
 LOC=git://gcc.gnu.org/git/gcc.git
 
-GMP=gmp-6.1.1
+GMP=gmp-6.2.0
 GMP_FILE=$(GMP).tar.xz
 GMP_LOC=https://ftp.gnu.org/gnu/gmp
-MPFR=mpfr-3.1.5
+MPFR=mpfr-4.1.0
 MPFR_FILE=$(MPFR).tar.xz
 MPFR_PATCH=allpatches
 MPFR_LOC=https://www.mpfr.org/mpfr-current/
-MPC=mpc-1.0.3
+MPC=mpc-1.2.0
 MPC_FILE=$(MPC).tar.gz
 MPC_LOC=https://ftp.gnu.org/gnu/mpc
-ISL=isl-0.14.1
+ISL=isl-0.20
 ISL_FILE=$(ISL).tar.xz
 ISL_LOC=http://isl.gforge.inria.fr
 
@@ -66,11 +66,11 @@ $(GIT_ID_FILE) :
 	
 
 $(BUILD_HOST_DL)/$(GMP_FILE) :
-	wget -O $(DL)/$(GMP_FILE) $(GMP_LOC)/$(GMP_FILE)
+	wget -O $(BUILD_HOST_DL)/$(GMP_FILE) $(GMP_LOC)/$(GMP_FILE)
 	
 $(BUILD_HOST_DL)/$(MPFR_FILE) :
 	wget -O $(BUILD_HOST_DL)/$(MPFR_FILE) $(MPFR_LOC)/$(MPFR_FILE)
-	wget -O $(BUILD_HOST_DL)/$(MPFR_PATCH) $(MPFR_LOC)/$(MPFR_PATCH)
+	-wget -O $(BUILD_HOST_DL)/$(MPFR_PATCH) $(MPFR_LOC)/$(MPFR_PATCH)
 	
 $(BUILD_HOST_DL)/$(MPC_FILE) :
 	wget -O $(BUILD_HOST_DL)/$(MPC_FILE) $(MPC_LOC)/$(MPC_FILE)

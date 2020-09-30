@@ -43,7 +43,7 @@ CONFIGURE_ARGS := \
 	--disable-multilib --disable-nls --disable-debug \
 	--enable-threads --enable-tls --enable-shared \
 	--disable-libquadmath --disable-libsanitizer --disable-libgomp --disable-libssp \
-	--enable-target-optspace --enable-lto \
+	--enable-target-optspace --enable-plugins --enable-lto \
 	--with-build-time-tools=$(TOOLCHAIN_SYSROOT)/bin \
 	--enable-long-long --enable-c99 \
 	--enable-languages=c,c++ \

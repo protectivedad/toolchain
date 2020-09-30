@@ -24,7 +24,7 @@ CONFIGURE_ARGS_1 := $(CONFIGURE_ARGS) \
 
 CONFIGURE_ARGS_2 := $(CONFIGURE_ARGS_1) \
 	UCLIBC_EXTRA_CFLAGS='-ffunction-sections -fdata-sections -fmessage-length=0' \
-	UCLIBC_EXTRA_LDFLAGS='-Wl,--gc-sections,-Map=$(CURR_DIR)/uClibc.map,--cref'
+	UCLIBC_EXTRA_LDFLAGS='-Wl,-O1,-s,--gc-sections,-Map=$(CURR_DIR)/uClibc.map,--cref'
 
 SOURCE_ID_FILE = $(CURR_DIR)/$(APP)-SOURCE_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
 CONFIG_ID_FILE = $(CURR_DIR)/$(APP)-CONFIG_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)

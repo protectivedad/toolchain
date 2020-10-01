@@ -42,8 +42,10 @@ headers : $(CONFIG_ID_FILE)
 	$(MAKE) -C $(APP) $(CONFIGURE_ARGS) install_headers
 	ln -sf $(TOOLCHAIN_SYSROOT)/usr/include $(TOOLCHAIN_SYSROOT)/sys-include
 
+# Do a pregen to generate some headers that required the compiler and then
+# reinstall the headers before the second stage of the compiler build.
 startfiles : $(CONFIG_ID_FILE)
-	$(MAKE) -C $(APP) $(CONFIGURE_ARGS_1) install_startfiles
+	$(MAKE) -C $(APP) $(CONFIGURE_ARGS_1) pregen install_headers install_startfiles
 
 install : $(CONFIG_ID_FILE)
 	$(MAKE) -C $(APP) $(CONFIGURE_ARGS_2) install

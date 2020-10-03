@@ -13,6 +13,7 @@ include $(BUILD_DIR)/make.common
 
 APP=uClibc
 LOC=https://github.com/protectivedad/uClibc
+BRANCH=G902
 
 CONFIGURE_ARGS := \
 	ARCH=$(TARGET_ARCH) \
@@ -32,11 +33,12 @@ CONFIG_ID_FILE = $(CURR_DIR)/$(APP)-CONFIG_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_ST
 .PHONY: headers startfiles install install_utils clean distclean shell
 
 $(SOURCE_ID_FILE) :
-	-[ ! -d $(APP) ] && git clone --depth=1 $(LOC) $(APP) 1>$(SOURCE_ID_FILE) 2>&1
+	-[ ! -d $(APP) ] && git clone --depth=1 --branch $(BRANCH) $(LOC) $(APP) 1>$(SOURCE_ID_FILE) 2>&1
 	@echo "$(APP) is cloned"
 
 $(CONFIG_ID_FILE) : $(SOURCE_ID_FILE)
-	cp uClibc.config $(APP)/.config 1>$(CONFIG_ID_FILE) 2>&1
+	cp -f g902_defconfig $(APP)/extra/Configs/defconfigs/mips/ 1>$(CONFIG_ID_FILE) 2>&1
+	$(MAKE) -C $(APP) g902_defconfig
 
 headers : $(CONFIG_ID_FILE)
 	$(MAKE) -C $(APP) $(CONFIGURE_ARGS) install_headers

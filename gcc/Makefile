@@ -26,7 +26,7 @@ MPFR_LOC=https://www.mpfr.org/mpfr-current/
 MPC=mpc-1.2.0
 MPC_FILE=$(MPC).tar.gz
 MPC_LOC=https://ftp.gnu.org/gnu/mpc
-ISL=isl-0.20
+ISL=isl-0.21
 ISL_FILE=$(ISL).tar.xz
 ISL_LOC=http://isl.gforge.inria.fr
 
@@ -43,6 +43,7 @@ CONFIGURE_ARGS := \
 	--disable-multilib --disable-nls --disable-debug \
 	--enable-threads --enable-tls --enable-shared \
 	--disable-libquadmath --disable-libsanitizer --disable-libgomp --disable-libssp \
+	--disable-libatomic --disable-libmpx --disable-libvtv \
 	--enable-target-optspace --enable-plugins --enable-lto \
 	--with-build-time-tools=$(TOOLCHAIN_SYSROOT)/bin \
 	--enable-long-long --enable-c99 \

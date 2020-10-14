@@ -33,7 +33,10 @@ uclibc: libgcc
 	$(MAKE) -C uclibc
 	$(MAKE) -C uclibc install_utils
 
-install: uclibc
+private: uclibc
+	$(MAKE) -C private
+
+install: private
 	$(MAKE) -C gcc
 
 clean: 

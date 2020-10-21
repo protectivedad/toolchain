@@ -24,8 +24,8 @@ CONFIGURE_ARGS_1 := $(CONFIGURE_ARGS) \
 	CROSS=$(TOOLCHAIN)/bin/$(TOOLCHAIN_PREFIX)-
 
 CONFIGURE_ARGS_2 := $(CONFIGURE_ARGS_1) \
-	UCLIBC_EXTRA_CFLAGS='-fPIC -flto -Os -ffunction-sections -fdata-sections -fmessage-length=0' \
-	UCLIBC_EXTRA_LDFLAGS='-fPIC -flto -Os -Wl,-O1,-s,--gc-sections,-Map=$(CURR_DIR)/uClibc.map,--cref'
+	UCLIBC_EXTRA_CFLAGS='-fmessage-length=0' \
+	UCLIBC_EXTRA_LDFLAGS='-Wl,-O1,-s,--gc-sections,-Map=$(CURR_DIR)/uClibc.map,--cref'
 
 SOURCE_ID_FILE = $(CURR_DIR)/$(APP)-SOURCE_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
 CONFIG_ID_FILE = $(CURR_DIR)/$(APP)-CONFIG_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
@@ -62,11 +62,15 @@ install_utils:
 install_hostutils:
 	$(MAKE) -C $(APP) $(CONFIGURE_ARGS_1) install_hostutils
 
+nconfig: $(CONFIG_ID_FILE)
+	$(MAKE) -C $(APP) $(CONFIGURE_ARGS) nconfig
+
 clean:
 	git -C $(APP) clean -dXf
-	rm -f $(CONFIG_ID_FILE) $(CURR_DIR)/uClibc.map
+	rm -f $(CONFIG_ID_FILE) $(PREGEN_ID_FILE) $(CURR_DIR)/uClibc.map
 
 distclean:
+	git -C $(APP) clean -dxf
 	rm -rf $(APP)-*_ID_* $(CURR_DIR)/uClibc.map
 
 # Shell target permits creating an interacive shell for debugging

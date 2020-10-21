@@ -1,0 +1,59 @@
+From c33d51b356049643f2688555d9f483d3fe33bcea Mon Sep 17 00:00:00 2001
+From: protectivedad <protectivedad@gmail.com>
+Date: Wed, 21 Oct 2020 20:47:03 -0300
+Subject: [PATCH] lto patches and install_headers fix
+
+---
+ Makefile.in           | 2 +-
+ Rules.mak             | 6 +++---
+ ldso/ldso/Makefile.in | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 877a0b6..c471d2c 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -169,7 +169,7 @@ $(ALL_HEADERS_SYS_ARCH):
+ 	$(do_ln) $(call rel_srcdir)libc/sysdeps/linux/$(TARGET_ARCH)/sys/$(@F) $@
+ endif
+ 
+-$(target-headers-sysdep) $(pregen-headers-y): | $(top_builddir)include/bits $(top_builddir)include/sys $(top_builddir)include/bits/sysnum.h 
++$(target-headers-sysdep) $(pregen-headers-y): | $(top_builddir)include/bits $(top_builddir)include/sys
+ 
+ HEADERCLEAN_common:
+ 	$(do_rm) $(ALL_HEADERS_COMMON)
+diff --git a/Rules.mak b/Rules.mak
+index 9631b03..7f7a253 100644
+--- a/Rules.mak
++++ b/Rules.mak
+@@ -52,11 +52,11 @@ noconfig_targets := menuconfig config nconfig \
+ CROSS_COMPILE ?= $(CROSS)
+ 
+ CC         = $(CROSS_COMPILE)gcc
+-AR         = $(CROSS_COMPILE)ar
++AR         = $(CROSS_COMPILE)gcc-ar
+ LD         = $(CROSS_COMPILE)ld
+-NM         = $(CROSS_COMPILE)nm
++NM         = $(CROSS_COMPILE)gcc-nm
+ OBJDUMP    = $(CROSS_COMPILE)objdump
+-STRIPTOOL  = $(CROSS_COMPILE)strip
++STRIPTOOL  = true
+ 
+ INSTALL    = install
+ LN         = ln
+diff --git a/ldso/ldso/Makefile.in b/ldso/ldso/Makefile.in
+index 993aeb9..41fb130 100644
+--- a/ldso/ldso/Makefile.in
++++ b/ldso/ldso/Makefile.in
+@@ -32,7 +32,7 @@ CFLAGS-rtld += -DUCLIBC_RUNTIME_PREFIX=\"$(RUNTIME_PREFIX)\" -DUCLIBC_LDSO=\"$(U
+ # Using -O2 instead. We could have use -fno-early-inlining with -Os too.
+ CFLAGS-$(DODEBUG)-ldso/ldso := -O2 -g
+ 
+-CFLAGS-ldso.c := -DLDSO_ELFINTERP=\"$(TARGET_ARCH)/elfinterp.c\"
++CFLAGS-ldso.c := -fno-lto -DLDSO_ELFINTERP=\"$(TARGET_ARCH)/elfinterp.c\"
+ 
+ ifeq ($(TARGET_ARCH),arc)
+ CFLAGS-ldso.c += -mno-long-calls
+-- 
+2.7.4
+

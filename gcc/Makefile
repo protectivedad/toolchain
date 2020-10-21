@@ -100,7 +100,7 @@ gcc : $(CONFIG_ID_FILE)
 
 libgcc : $(CONFIG_ID_FILE)
 	if [ ! -e $(LIBC_SO) ] ; then \
-		$(TOOLCHAIN)/bin/$(TOOLCHAIN_PREFIX)-gcc -Wl,-soname,libc.so.0 -nostdlib -nostartfiles -shared -x c /dev/null -o $(LIBC_SO).fake; \
+		$(TOOLCHAIN)/bin/$(TOOLCHAIN_PREFIX)-gcc -Wl,-soname,libc.so.1 -nostdlib -nostartfiles -shared -x c /dev/null -o $(LIBC_SO).fake; \
 		ln -srf $(LIBC_SO).fake $(LIBC_SO); \
 	fi
 	[ ! -e $(TOOLCHAIN_SYSROOT)/lib/crti.o ] && ln -sr $(TOOLCHAIN_SYSROOT)/usr/lib/crt*.o $(TOOLCHAIN_SYSROOT)/lib/ || true

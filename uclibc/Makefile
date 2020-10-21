@@ -12,8 +12,8 @@ export BUILD_DIR
 include $(BUILD_DIR)/make.common
 
 APP=uClibc
-LOC=https://github.com/protectivedad/uClibc
-BRANCH=G902
+LOC=git://uclibc-ng.org/git/uclibc-ng
+BRANCH=v1.0.36
 
 CONFIGURE_ARGS := \
 	ARCH=$(TARGET_ARCH) \
@@ -29,16 +29,20 @@ CONFIGURE_ARGS_2 := $(CONFIGURE_ARGS_1) \
 
 SOURCE_ID_FILE = $(CURR_DIR)/$(APP)-SOURCE_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
 CONFIG_ID_FILE = $(CURR_DIR)/$(APP)-CONFIG_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
+PREGEN_ID_FILE = $(CURR_DIR)/$(APP)-PREGEN_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
 
 .PHONY: headers startfiles install install_utils clean distclean shell
 
 $(SOURCE_ID_FILE) :
 	-[ ! -d $(APP) ] && git clone --depth=1 --branch $(BRANCH) $(LOC) $(APP) 1>$(SOURCE_ID_FILE) 2>&1
-	@echo "$(APP) is cloned"
+	@echo "$(APP) is cloned" 1>>$(SOURCE_ID_FILE) 2>&1
 
 $(CONFIG_ID_FILE) : $(SOURCE_ID_FILE)
 	cp -f g902_defconfig $(APP)/extra/Configs/defconfigs/mips/ 1>$(CONFIG_ID_FILE) 2>&1
-	$(MAKE) -C $(APP) g902_defconfig
+	$(MAKE) -C $(APP) g902_defconfig 1>>$(CONFIG_ID_FILE) 2>&1
+
+$(PREGEN_ID_FILE):
+	$(MAKE) -C $(APP) $(CONFIGURE_ARGS_1) pregen 1>$(PREGEN_ID_FILE) 2>&1
 
 headers : $(CONFIG_ID_FILE)
 	$(MAKE) -C $(APP) $(CONFIGURE_ARGS) install_headers
@@ -46,10 +50,10 @@ headers : $(CONFIG_ID_FILE)
 
 # Do a pregen to generate some headers that required the compiler and then
 # reinstall the headers before the second stage of the compiler build.
-startfiles : $(CONFIG_ID_FILE)
-	$(MAKE) -C $(APP) $(CONFIGURE_ARGS_1) pregen install_headers install_startfiles
+startfiles : $(CONFIG_ID_FILE) $(PREGEN_ID_FILE)
+	$(MAKE) -C $(APP) $(CONFIGURE_ARGS_1) install_headers install_startfiles
 
-install : $(CONFIG_ID_FILE)
+install : $(CONFIG_ID_FILE) $(PREGEN_ID_FILE)
 	$(MAKE) -C $(APP) $(CONFIGURE_ARGS_2) install
 
 install_utils:
@@ -63,7 +67,7 @@ clean:
 	rm -f $(CONFIG_ID_FILE) $(CURR_DIR)/uClibc.map
 
 distclean:
-	rm -rf $(APP) $(APP)-*_ID_* $(CURR_DIR)/uClibc.map
+	rm -rf $(APP)-*_ID_* $(CURR_DIR)/uClibc.map
 
 # Shell target permits creating an interacive shell for debugging
 shell:

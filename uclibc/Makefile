@@ -29,6 +29,7 @@ CONFIGURE_ARGS_2 := $(CONFIGURE_ARGS_1) \
 
 SOURCE_ID_FILE = $(CURR_DIR)/$(APP)-SOURCE_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
 CONFIG_ID_FILE = $(CURR_DIR)/$(APP)-CONFIG_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
+PATCH_ID_FILE = $(CURR_DIR)/$(APP)-PATCH_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
 PREGEN_ID_FILE = $(CURR_DIR)/$(APP)-PREGEN_ID_$(TOOLCHAIN_PREFIX)_$(LINUX_VER_STR)
 
 .PHONY: headers startfiles install install_utils clean distclean shell
@@ -41,6 +42,9 @@ $(CONFIG_ID_FILE) : $(SOURCE_ID_FILE)
 	cp -f g902_defconfig $(APP)/extra/Configs/defconfigs/mips/ 1>$(CONFIG_ID_FILE) 2>&1
 	$(MAKE) -C $(APP) g902_defconfig 1>>$(CONFIG_ID_FILE) 2>&1
 
+$(PATCH_ID_FILE) : $(CONFIG_ID_FILE)
+	patch -p1 -d $(APP) <*.patch 1>$(PATCH_ID_FILE) 2>&1
+	
 $(PREGEN_ID_FILE):
 	$(MAKE) -C $(APP) $(CONFIGURE_ARGS_1) pregen 1>$(PREGEN_ID_FILE) 2>&1
 
@@ -50,7 +54,7 @@ headers : $(CONFIG_ID_FILE)
 
 # Do a pregen to generate some headers that required the compiler and then
 # reinstall the headers before the second stage of the compiler build.
-startfiles : $(CONFIG_ID_FILE) $(PREGEN_ID_FILE)
+startfiles : $(PATCH_ID_FILE) $(PREGEN_ID_FILE)
 	$(MAKE) -C $(APP) $(CONFIGURE_ARGS_1) install_headers install_startfiles
 
 install : $(CONFIG_ID_FILE) $(PREGEN_ID_FILE)
